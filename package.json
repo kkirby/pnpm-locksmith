@@ -1,0 +1,36 @@
+{
+  "name": "@kkirbatski/pnpm-locksmith",
+  "version": "1.0.0",
+  "description": "Sync package.json dependency versions to the exact versions in your pnpm lockfile (and optional resolutions via pnpm why)",
+  "type": "module",
+  "bin": {
+    "pnpm-locksmith": "./build/pnpm-locksmith.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "rm -rf build && tsc"
+  },
+  "keywords": [
+    "pnpm",
+    "lockfile",
+    "dependencies",
+    "devDependencies",
+    "resolutions",
+    "overrides",
+    "sync",
+    "pin",
+    "monorepo"
+  ],
+  "author": "Kyle Kirbatski",
+  "license": "Unlicense",
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "@types/node": "^24.4.0",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "remeda": "^2.27.2"
+  }
+}

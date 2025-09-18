@@ -21,7 +21,10 @@ import type { PnpmJsonProject } from "./pnpmTypes.js";
  */
 function exec<T>(command: string, args: string[] = []): T {
   return JSON.parse(
-    execFileSync("pnpm", ["--json", command, ...args], { encoding: "utf-8" })
+    execFileSync("pnpm", ["--json", command, ...args], {
+      encoding: "utf-8",
+      shell: true,
+    })
   );
 }
 

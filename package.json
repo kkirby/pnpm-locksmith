@@ -1,6 +1,6 @@
 {
   "name": "@kkirbatski/pnpm-locksmith",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sync package.json dependency versions to the exact versions in your pnpm lockfile (and optional resolutions via pnpm why)",
   "type": "module",
   "bin": {

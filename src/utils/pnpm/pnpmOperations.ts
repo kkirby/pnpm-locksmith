@@ -20,10 +20,15 @@ import type { PnpmJsonProject } from "./pnpmTypes.js";
  * ```
  */
 function exec<T>(command: string, args: string[] = []): T {
+  const isWindows = process.platform === "win32";
+  const [executable, execArgs] = isWindows
+    ? [process.env.ComSpec ?? "cmd.exe", ["/c", "pnpm", command, ...args]]
+    : ["pnpm", [command, ...args]];
+
   return JSON.parse(
-    execFileSync("pnpm", ["--json", command, ...args], {
+    execFileSync(executable, execArgs, {
       encoding: "utf-8",
-      shell: true,
+      maxBuffer: 10 * 1024 * 1024, // 10 MB buffer
     })
   );
 }

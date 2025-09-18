@@ -1,7 +1,13 @@
 #!/usr/bin/env node
+import {
+  type ProjectId,
+  readWantedLockfile,
+  writeWantedLockfile,
+} from "@pnpm/lockfile-file";
 import packageJson from "./utils/packageJson/packageJsonOperations.js";
 import pnpm from "./utils/pnpm/pnpmOperations.js";
 import { syncWithPnpm, syncWithWhy } from "./utils/utils.js";
+import { mapValues } from "remeda";
 
 // Get the main project from pnpm lockfile (first project in the list)
 const pnpmMainProject = pnpm.ls()[0];
@@ -45,7 +51,49 @@ if (packageJsonContents.pnpm?.overrides != null) {
   );
 }
 
+// Read and update the pnpm lockfile
+const lockFile = await readWantedLockfile(".", {
+  ignoreIncompatible: false,
+});
+
+if (!lockFile) {
+  throw new Error("No pnpm-lock.yaml file found in the current directory");
+}
+
+const mainProjectImporter = lockFile.importers["." as ProjectId];
+if (!mainProjectImporter) {
+  throw new Error("No main project found in pnpm-lock.yaml");
+}
+
+// Update specifiers in the main project to match package.json versions
+mainProjectImporter.specifiers = mapValues(
+  mainProjectImporter.specifiers,
+  (_, packageName) => {
+    return (
+      packageJsonContents.dependencies?.[packageName] ??
+      packageJsonContents.devDependencies?.[packageName] ??
+      packageJsonContents.pnpm?.overrides?.[packageName] ??
+      packageJsonContents.resolutions?.[packageName] ??
+      _
+    );
+  }
+);
+
+// Update lockfile overrides to match package.json overrides/resolutions
+if (lockFile.overrides) {
+  lockFile.overrides = mapValues(lockFile.overrides, (_, packageName) => {
+    return (
+      packageJsonContents.pnpm?.overrides?.[packageName] ??
+      packageJsonContents.resolutions?.[packageName] ??
+      _
+    );
+  });
+}
 // Write the updated package.json back to disk
 packageJson.write(packageJsonContents);
+// Write the updated pnpm lockfile back to disk
+writeWantedLockfile(".", lockFile);
 
-console.log("Synchronized package.json dependencies with pnpm lockfile");
+console.log(
+  "Synchronized package.json dependencies with pnpm lockfile, and wrote back specifier updates to pnpm-lock.yaml"
+);

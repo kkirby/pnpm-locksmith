@@ -43,13 +43,18 @@ function exec<T>(command: string, args: string[] = []): T {
  *                If not provided, lists all dependencies at all levels.
  * @returns A PnpmProjects object containing the list of projects and their dependencies.
  */
-function ls(depth?: number): PnpmProjects {
-  return new PnpmProjects(
-    exec<PnpmJsonProject[]>(
-      "ls",
-      depth != null ? ["--depth", depth.toString()] : []
-    )
-  );
+function ls({
+  depth,
+  recursive,
+}: { depth?: number; recursive?: boolean } = {}): PnpmProjects {
+  const args: string[] = [];
+  if (depth != null) {
+    args.push("--depth", depth.toString());
+  }
+  if (recursive) {
+    args.push("--recursive");
+  }
+  return new PnpmProjects(exec<PnpmJsonProject[]>("ls", args));
 }
 
 function why(packageName: string): PnpmProjects {

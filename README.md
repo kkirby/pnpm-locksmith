@@ -66,7 +66,7 @@ git checkout -- package.json
 ## Notes and limitations
 
 - The tool expects dependencies in `package.json` to already be installed. Run `pnpm install` first.
-- Monorepos: Likely doesn't work for monorepos. Feel free to make a PR.
+- Monorepos: Should work.
 - This tool does not add or remove dependencies; it only updates existing version strings.
 
 ## Development

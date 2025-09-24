@@ -1,4 +1,5 @@
 import { readFileSync, writeFileSync } from "node:fs";
+import { join as joinPath } from "node:path";
 
 import type { PackageJson } from "./PackageJsonTypes.js";
 
@@ -7,8 +8,12 @@ import type { PackageJson } from "./PackageJsonTypes.js";
  *
  * @returns The parsed package.json object
  */
-function read(): PackageJson {
-  return JSON.parse(readFileSync("package.json", { encoding: "utf-8" }));
+function read(packageJsonDir: string): PackageJson {
+  return JSON.parse(
+    readFileSync(joinPath(packageJsonDir, "package.json"), {
+      encoding: "utf-8",
+    })
+  );
 }
 
 /**
@@ -16,10 +21,14 @@ function read(): PackageJson {
  *
  * @param packageJson - The package.json object to write to disk
  */
-function write(packageJson: PackageJson) {
-  writeFileSync("package.json", JSON.stringify(packageJson, null, 2) + "\n", {
-    encoding: "utf-8",
-  });
+function write(packageJsonDir: string, packageJson: PackageJson) {
+  writeFileSync(
+    joinPath(packageJsonDir, "package.json"),
+    JSON.stringify(packageJson, null, 2) + "\n",
+    {
+      encoding: "utf-8",
+    }
+  );
 }
 
 const packageJson = {
